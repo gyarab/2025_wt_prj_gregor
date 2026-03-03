@@ -1,3 +1,15 @@
-/venv/
-/prj/db.sqlite3
+# Python
+__pycache__/
 *.pyc
+
+# Virtual env
+venv/
+.venv/
+
+# Django DB
+db.sqlite3
+
+# IDE
+.vscode/
+.idea/
+.DS_Store
