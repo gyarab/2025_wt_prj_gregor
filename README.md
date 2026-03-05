@@ -1,8 +1,9 @@
-# FightLog – Tréninkový deník pro MMA a BJJ
+# FightLog
+## MMA & BJJ Training Tracker
 
 ---
 
-## Úvod
+## O projektu
 
 FightLog je webová aplikace určená pro zápasníky MMA a brazilského jiu-jitsu, kteří chtějí systematicky sledovat svůj trénink a dlouhodobý progres. V bojových sportech je důležité analyzovat průběh <u>tréninků</u>, výsledky <u>sparringů</u> a úspěšnost jednotlivých <u>submisí</u>. Tyto informace umožňují zápasníkovi lépe pochopit vlastní styl boje a identifikovat silné i slabé stránky.
 
@@ -28,8 +29,6 @@ Další důležitou součástí aplikace je <u>kalendář tréninků</u>, ve kte
 
 ## Role uživatelů
 
-Aplikace rozlišuje tři základní role uživatelů:
-
 **<u>Anonymní návštěvník</u>**  
 Má přístup pouze k úvodní stránce aplikace a pro další práci se musí <u>registrovat</u> nebo <u>přihlásit</u>.
 
@@ -37,10 +36,38 @@ Má přístup pouze k úvodní stránce aplikace a pro další práci se musí <
 Může zapisovat nové <u>tréninky</u>, upravovat své záznamy a sledovat osobní <u>statistiky</u>.
 
 **<u>Administrátor</u>**  
-Má oprávnění spravovat databázi aplikace, kontrolovat obsah systému a případně upravovat záznamy v databázi.
+Má oprávnění spravovat databázi aplikace a kontrolovat obsah systému.
+
+---
+
+# Analýza a design aplikace
+
+## User Flow
+
+Diagram zobrazuje základní navigaci aplikace z pohledu uživatele.
+
+![User Flow](userflow.jpg)
+
+---
+
+## Wireframes
+
+Návrh rozložení jednotlivých mobilních obrazovek aplikace.
+
+![Wireframes](wireframes.jpg)
+
+---
+
+## Použité technologie
+
+- Python
+- Django
+- HTML
+- Bootstrap
+- SQLite
 
 ---
 
 ## Cíl projektu
 
-Hlavním cílem projektu FightLog je vytvořit přehledný nástroj, který pomůže zápasníkům analyzovat jejich <u>trénink</u>, sledovat dlouhodobý progres a efektivně zlepšovat výkon v MMA a grapplingu.
+Cílem projektu FightLog je vytvořit přehlednou databázovou webovou aplikaci pro evidenci tréninků bojových sportů. Aplikace umožní zápasníkům sledovat jejich progres, analyzovat statistiky technik a dlouhodobě zlepšovat výkon v MMA a grapplingu.
