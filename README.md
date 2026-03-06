@@ -58,16 +58,6 @@ Návrh rozložení jednotlivých mobilních obrazovek aplikace.
 
 ---
 
-## Použité technologie
-
-- Python
-- Django
-- HTML
-- Bootstrap
-- SQLite
-
----
-
 ## Cíl projektu
 
 Cílem projektu FightLog je vytvořit přehlednou databázovou webovou aplikaci pro evidenci tréninků bojových sportů. Aplikace umožní zápasníkům sledovat jejich progres, analyzovat statistiky technik a dlouhodobě zlepšovat výkon v MMA a grapplingu.
