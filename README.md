@@ -56,6 +56,60 @@ Návrh rozložení jednotlivých mobilních obrazovek aplikace.
 
 ![Wireframes](wireframes.jpg)
 
+## E-R diagram / Databázové schéma
+
+Databázový model aplikace **FightLog** je navržen pro evidenci tréninků, použitých technik a základních statistik uživatele. Hlavním cílem tohoto modelu je umožnit ukládání tréninkových dat tak, aby bylo možné zpětně sledovat průběh jednotlivých tréninků, vyhodnocovat používané techniky a zobrazovat přehledy a statistiky.
+
+Základní entitou je **User**, která reprezentuje registrovaného uživatele aplikace. Každý uživatel si vede vlastní záznamy, proto může být navázán na více tréninků. Mezi entitami **User** a **Training** je tedy vztah **1:N**. Jeden uživatel může mít mnoho tréninků, ale každý konkrétní trénink patří právě jednomu uživateli.
+
+Entita **Training** představuje jeden konkrétní tréninkový záznam. Obsahuje základní údaje, jako je datum, délka tréninku a případné poznámky. Tato entita slouží jako hlavní záznam tréninkové aktivity. V jednom tréninku může být zaznamenáno více různých technik nebo submisí, které byly během sparringu použity.
+
+Samotné techniky jsou reprezentovány entitou **Technique**. Tato entita obsahuje seznam všech technik, které se v aplikaci sledují, například armbar, triangle choke, rear naked choke, kimura nebo guillotine. Jedna technika se může objevit ve více různých trénincích, protože stejnou techniku může uživatel použít opakovaně v různých dnech.
+
+Protože mezi entitami **Training** a **Technique** vzniká vztah **M:N**, je tento vztah realizován pomocnou entitou **TechniqueStat**. Tato entita propojuje konkrétní trénink s konkrétní technikou a zároveň ukládá doplňující údaj, například počet použití dané techniky v rámci jednoho tréninku. Díky tomu lze sledovat, jak často byla konkrétní technika použita, a následně tato data využít pro statistiky a grafy.
+
+Mezi entitami **Training** a **TechniqueStat** je vztah **1:N**, protože jeden trénink může obsahovat více záznamů o technikách. Stejně tak mezi entitami **Technique** a **TechniqueStat** je vztah **1:N**, protože jedna technika se může vyskytovat v mnoha různých trénincích.
+
+Tento databázový model je přehledný, dobře rozšiřitelný a odpovídá zaměření aplikace FightLog jako tréninkového deníku pro MMA a BJJ.
+
+---
+
+## Entity
+
+### User
+- id
+- username
+- email
+
+### Training
+- id
+- date
+- duration
+- notes
+- user_id
+
+### Technique
+- id
+- name
+
+### TechniqueStat
+- id
+- count
+- training_id
+- technique_id
+
+---
+
+## Vztahy mezi entitami
+
+- **User — Training** = **1:N**
+- **Training — TechniqueStat** = **1:N**
+- **Technique — TechniqueStat** = **1:N**
+
+Z toho vyplývá, že mezi entitami **Training** a **Technique** existuje nepřímý vztah **M:N**, který je realizován pomocí entity **TechniqueStat**.
+
+![E-R diagram](E-R diagram)
+
 ---
 
 ## Cíl projektu
