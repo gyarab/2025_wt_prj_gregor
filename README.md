@@ -108,7 +108,7 @@ Tento databázový model je přehledný, dobře rozšiřitelný a odpovídá zam
 
 Z toho vyplývá, že mezi entitami **Training** a **Technique** existuje nepřímý vztah **M:N**, který je realizován pomocí entity **TechniqueStat**.
 
-![E-R diagram](E-R diagram.jpg)
+![E-R diagram](E-R diagram.jpg.jpeg)
 
 ---
 
