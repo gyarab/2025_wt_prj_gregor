@@ -8,7 +8,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -16,9 +15,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'prj.app.apps.AppConfig',
+    'app',
 ]
-
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -30,9 +28,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-
 ROOT_URLCONF = 'prj.urls'
-
 
 TEMPLATES = [
     {
@@ -49,9 +45,7 @@ TEMPLATES = [
     },
 ]
 
-
 WSGI_APPLICATION = 'prj.wsgi.application'
-
 
 DATABASES = {
     'default': {
@@ -59,7 +53,6 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -76,15 +69,10 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
-LANGUAGE_CODE = 'en-us'
-
-TIME_ZONE = 'UTC'
-
+LANGUAGE_CODE = 'cs-cz'
+TIME_ZONE = 'Europe/Prague'
 USE_I18N = True
-
 USE_TZ = True
-
 
 STATIC_URL = 'static/'
 
