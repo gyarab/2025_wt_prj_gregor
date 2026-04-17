@@ -1,0 +1,128 @@
+[
+  {
+    "model": "app.techniquestat",
+    "pk": 1,
+    "fields": {
+      "training": 1,
+      "technique": 1,
+      "count": 2
+    }
+  },
+  {
+    "model": "app.techniquestat",
+    "pk": 2,
+    "fields": {
+      "training": 1,
+      "technique": 5,
+      "count": 1
+    }
+  },
+  {
+    "model": "app.techniquestat",
+    "pk": 3,
+    "fields": {
+      "training": 1,
+      "technique": 3,
+      "count": 1
+    }
+  },
+  {
+    "model": "app.techniquestat",
+    "pk": 4,
+    "fields": {
+      "training": 2,
+      "technique": 5,
+      "count": 2
+    }
+  },
+  {
+    "model": "app.techniquestat",
+    "pk": 5,
+    "fields": {
+      "training": 2,
+      "technique": 2,
+      "count": 1
+    }
+  },
+  {
+    "model": "app.techniquestat",
+    "pk": 6,
+    "fields": {
+      "training": 3,
+      "technique": 2,
+      "count": 2
+    }
+  },
+  {
+    "model": "app.techniquestat",
+    "pk": 7,
+    "fields": {
+      "training": 3,
+      "technique": 8,
+      "count": 1
+    }
+  },
+  {
+    "model": "app.techniquestat",
+    "pk": 8,
+    "fields": {
+      "training": 4,
+      "technique": 4,
+      "count": 2
+    }
+  },
+  {
+    "model": "app.techniquestat",
+    "pk": 9,
+    "fields": {
+      "training": 4,
+      "technique": 6,
+      "count": 1
+    }
+  },
+  {
+    "model": "app.techniquestat",
+    "pk": 10,
+    "fields": {
+      "training": 4,
+      "technique": 1,
+      "count": 1
+    }
+  },
+  {
+    "model": "app.techniquestat",
+    "pk": 11,
+    "fields": {
+      "training": 5,
+      "technique": 3,
+      "count": 2
+    }
+  },
+  {
+    "model": "app.techniquestat",
+    "pk": 12,
+    "fields": {
+      "training": 5,
+      "technique": 7,
+      "count": 1
+    }
+  },
+  {
+    "model": "app.techniquestat",
+    "pk": 13,
+    "fields": {
+      "training": 6,
+      "technique": 5,
+      "count": 1
+    }
+  },
+  {
+    "model": "app.techniquestat",
+    "pk": 14,
+    "fields": {
+      "training": 6,
+      "technique": 2,
+      "count": 1
+    }
+  }
+]

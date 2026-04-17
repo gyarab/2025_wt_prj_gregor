@@ -1,0 +1,20 @@
+- model: app.techniquestat
+  pk: 1
+  fields:
+    training: 1
+    technique: 1
+    count: 2
+
+- model: app.techniquestat
+  pk: 2
+  fields:
+    training: 1
+    technique: 2
+    count: 1
+
+- model: app.techniquestat
+  pk: 3
+  fields:
+    training: 2
+    technique: 3
+    count: 1

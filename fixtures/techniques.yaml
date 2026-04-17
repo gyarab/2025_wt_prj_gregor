@@ -1,0 +1,19 @@
+- model: app.technique
+  pk: 1
+  fields:
+    name: Armbar
+
+- model: app.technique
+  pk: 2
+  fields:
+    name: Kimura
+
+- model: app.technique
+  pk: 3
+  fields:
+    name: Triangle
+
+- model: app.technique
+  pk: 4
+  fields:
+    name: RNC

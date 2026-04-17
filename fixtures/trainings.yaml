@@ -1,0 +1,21 @@
+- model: app.training
+  pk: 1
+  fields:
+    user: 1
+    date: 2026-03-01
+    duration: 90
+    notes: MMA sparring
+    wins: 3
+    losses: 1
+    draws: 0
+
+- model: app.training
+  pk: 2
+  fields:
+    user: 1
+    date: 2026-03-02
+    duration: 60
+    notes: BJJ drilling
+    wins: 1
+    losses: 0
+    draws: 0
