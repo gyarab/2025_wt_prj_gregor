@@ -1,0 +1,86 @@
+[
+  {
+    "model": "app.training",
+    "pk": 1,
+    "fields": {
+      "user": 1,
+      "date": "2026-03-01",
+      "start_time": "18:00:00",
+      "duration": 90,
+      "notes": "Hard MMA sparring, good pressure and takedown entries.",
+      "wins": 3,
+      "losses": 1,
+      "draws": 0
+    }
+  },
+  {
+    "model": "app.training",
+    "pk": 2,
+    "fields": {
+      "user": 1,
+      "date": "2026-03-03",
+      "start_time": "17:30:00",
+      "duration": 75,
+      "notes": "BJJ drilling and positional sparring from back control.",
+      "wins": 2,
+      "losses": 0,
+      "draws": 1
+    }
+  },
+  {
+    "model": "app.training",
+    "pk": 3,
+    "fields": {
+      "user": 1,
+      "date": "2026-03-05",
+      "start_time": "19:00:00",
+      "duration": 60,
+      "notes": "Technique session focused on submissions from guard.",
+      "wins": 1,
+      "losses": 0,
+      "draws": 0
+    }
+  },
+  {
+    "model": "app.training",
+    "pk": 4,
+    "fields": {
+      "user": 1,
+      "date": "2026-03-07",
+      "start_time": "10:00:00",
+      "duration": 120,
+      "notes": "Competition style rounds, high pace, a lot of scrambles.",
+      "wins": 4,
+      "losses": 2,
+      "draws": 0
+    }
+  },
+  {
+    "model": "app.training",
+    "pk": 5,
+    "fields": {
+      "user": 1,
+      "date": "2026-03-10",
+      "start_time": "18:15:00",
+      "duration": 90,
+      "notes": "Wrestling entries to top control and submission chains.",
+      "wins": 3,
+      "losses": 2,
+      "draws": 1
+    }
+  },
+  {
+    "model": "app.training",
+    "pk": 6,
+    "fields": {
+      "user": 1,
+      "date": "2026-03-12",
+      "start_time": "17:45:00",
+      "duration": 80,
+      "notes": "Light sparring, recovery pace, focus on timing.",
+      "wins": 2,
+      "losses": 1,
+      "draws": 0
+    }
+  }
+]
