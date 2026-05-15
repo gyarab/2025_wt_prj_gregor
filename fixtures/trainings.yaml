@@ -3,8 +3,9 @@
   fields:
     user: 1
     date: 2026-03-01
+    start_time: "18:00:00"
     duration: 90
-    notes: MMA sparring
+    notes: MMA sparring, tvrdé tempo, dobrý tlak na pletivu.
     wins: 3
     losses: 1
     draws: 0
@@ -13,9 +14,46 @@
   pk: 2
   fields:
     user: 1
-    date: 2026-03-02
+    date: 2026-03-03
+    start_time: "17:30:00"
+    duration: 75
+    notes: BJJ drilling, back control a rear naked choke.
+    wins: 2
+    losses: 0
+    draws: 1
+
+- model: app.training
+  pk: 3
+  fields:
+    user: 1
+    date: 2026-03-05
+    start_time: "19:00:00"
     duration: 60
-    notes: BJJ drilling
+    notes: Technický trénink zaměřený na guard a submise.
     wins: 1
     losses: 0
     draws: 0
+
+- model: app.training
+  pk: 4
+  fields:
+    user: 1
+    date: 2026-03-07
+    start_time: "10:00:00"
+    duration: 120
+    notes: Competition rounds, hodně scramblů a přechodů.
+    wins: 4
+    losses: 2
+    draws: 0
+
+- model: app.training
+  pk: 5
+  fields:
+    user: 1
+    date: 2026-03-10
+    start_time: "18:15:00"
+    duration: 90
+    notes: Wrestling entries, top control a kimura trap.
+    wins: 3
+    losses: 2
+    draws: 1

@@ -6,14 +6,34 @@
 - model: app.technique
   pk: 2
   fields:
-    name: Kimura
+    name: Triangle choke
 
 - model: app.technique
   pk: 3
   fields:
-    name: Triangle
+    name: Kimura
 
 - model: app.technique
   pk: 4
   fields:
-    name: RNC
+    name: Guillotine
+
+- model: app.technique
+  pk: 5
+  fields:
+    name: Rear naked choke
+
+- model: app.technique
+  pk: 6
+  fields:
+    name: Anaconda choke
+
+- model: app.technique
+  pk: 7
+  fields:
+    name: D'Arce choke
+
+- model: app.technique
+  pk: 8
+  fields:
+    name: Omoplata
