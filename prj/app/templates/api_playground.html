@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block title %}API Playground{% endblock %}
+
+{% block content %}
+
+<div class="container mt-4">
+    <h1>API Playground</h1>
+
+    <p>
+        Tady můžeš testovat API endpoint pro FightLog.
+        JavaScript používá fetch(), který vrací Promise.
+    </p>
+
+    <div class="card p-3 mb-3">
+        <label for="trainingId" class="form-label">ID tréninku</label>
+        <input id="trainingId" type="number" class="form-control" value="1">
+
+        <button class="btn btn-primary mt-3" onclick="loadTraining()">
+            Načíst trénink
+        </button>
+
+        <button class="btn btn-secondary mt-3" onclick="clearResult()">
+            Vyčistit
+        </button>
+    </div>
+
+    <h2>Výsledek</h2>
+    <pre id="result" class="bg-dark text-light p-3 rounded">Zatím nejsou načtená žádná data.</pre>
+</div>
+
+<script>
+function loadTraining() {
+    const id = document.getElementById("trainingId").value;
+
+    fetch("/api/training/" + id)
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById("result").textContent =
+                JSON.stringify(data, null, 2);
+        });
+}
+
+function clearResult() {
+    document.getElementById("result").textContent = "Zatím nejsou načtená žádná data.";
+}
+</script>
+
+{% endblock %}
