@@ -1,7 +1,49 @@
 {% extends "base.html" %}
-{% block title %}Home | FightLog{% endblock %}
+{% block title %}FightLog{% endblock %}
 
 {% block content %}
-  <h1 class="mb-3">Home</h1>
-  <p class="text-muted">Vítej ve FightLogu.</p>
+
+<section class="hero text-center mb-4">
+  <h1 class="display-4 fw-bold">
+    Fight<span class="text-dark">Log</span>
+  </h1>
+
+  <p class="lead mt-3">
+    Tréninkový deník pro MMA, BJJ a grappling.
+  </p>
+
+  <p class="mb-4">
+    Zapisuj tréninky, sleduj techniky a vyhodnocuj svůj progres.
+  </p>
+
+  <a href="{% url 'api_playground' %}" class="btn btn-light btn-lg">
+    Zadat trénink
+  </a>
+</section>
+
+<div class="d-flex flex-column gap-4">
+
+  <div class="fight-card p-4">
+    <h2 class="h3">🥊 Tréninky</h2>
+    <p class="mb-0">
+      Evidence data, délky tréninku, poznámek a výsledků sparringů.
+    </p>
+  </div>
+
+  <div class="fight-card p-4">
+    <h2 class="h3">🥋 Techniky</h2>
+    <p class="mb-0">
+      Armbar, triangle choke, rear naked choke, kimura, guillotine a další techniky.
+    </p>
+  </div>
+
+  <div class="fight-card p-4">
+    <h2 class="h3">📊 Statistiky</h2>
+    <p class="mb-0">
+      Přehled použitých technik a dlouhodobé sledování progresu zápasníka.
+    </p>
+  </div>
+
+</div>
+
 {% endblock %}
