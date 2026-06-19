@@ -1,0 +1,208 @@
+{% extends "base.html" %}
+{% block title %}Tréninky | FightLog{% endblock %}
+
+{% block content %}
+
+<div class="page-card p-4 mb-5">
+  <h1>Tréninky</h1>
+  <p class="text-secondary mb-0">
+    Kalendář, série a seznam uložených tréninků.
+  </p>
+</div>
+
+<div class="page-card p-4 mb-5">
+  <h2>Tréninková série</h2>
+  <p class="text-secondary">
+    Plamen držíš, dokud nevynecháš víc než 3 dny.
+  </p>
+
+  <h3 id="streakText" class="brand-red mb-4">Načítám...</h3>
+  <div id="calendar" class="row g-2"></div>
+</div>
+
+<div class="page-card p-4">
+  <h2>Uložené tréninky</h2>
+  <div id="trainingList" class="d-flex flex-column gap-3 mt-3"></div>
+</div>
+
+<div id="message"></div>
+
+<script>
+let trainings = [];
+
+function showMessage(text, type) {
+  document.getElementById("message").innerHTML = `
+    <div class="alert alert-${type} mt-4">${text}</div>
+  `;
+}
+
+function formatResults(results) {
+  if (!results || results.length === 0) return "žádná technika";
+  return results.map(item => `${item.count}× ${item.technique_name}`).join(", ");
+}
+
+function calculateStreak(dates) {
+  const uniqueDates = [...new Set(dates)].sort().reverse();
+  if (uniqueDates.length === 0) return 0;
+
+  let streak = 1;
+  let previous = new Date(uniqueDates[0]);
+
+  for (let i = 1; i < uniqueDates.length; i++) {
+    const current = new Date(uniqueDates[i]);
+    const diffDays = Math.round((previous - current) / (1000 * 60 * 60 * 24));
+
+    if (diffDays <= 4) {
+      streak += diffDays;
+      previous = current;
+    } else {
+      break;
+    }
+  }
+
+  return streak;
+}
+
+function renderCalendar(data) {
+  const trainedDates = data.map(training => training.date);
+  const trainedSet = new Set(trainedDates);
+
+  const streak = calculateStreak(trainedDates);
+  document.getElementById("streakText").innerText =
+    streak > 0 ? `🔥 ${streak} dní v sérii` : "Bez aktuální série";
+
+  const calendar = document.getElementById("calendar");
+  calendar.innerHTML = "";
+
+  const today = new Date();
+
+  for (let i = 20; i >= 0; i--) {
+    const day = new Date(today);
+    day.setDate(today.getDate() - i);
+
+    const iso = day.toISOString().slice(0, 10);
+    const isTrained = trainedSet.has(iso);
+
+    calendar.innerHTML += `
+      <div class="col-4 col-md-2 col-lg-1">
+        <div class="calendar-day ${isTrained ? "trained-day" : ""}">
+          <div>${day.getDate()}.${day.getMonth() + 1}.</div>
+          <div>${isTrained ? "🔥" : ""}</div>
+        </div>
+      </div>
+    `;
+  }
+}
+
+function loadTrainings() {
+  fetch("/api/training")
+    .then(response => response.json())
+    .then(data => {
+      trainings = data;
+      renderCalendar(data);
+      renderTrainingList(data);
+    });
+}
+
+function renderTrainingList(data) {
+  const box = document.getElementById("trainingList");
+  box.innerHTML = "";
+
+  if (!data.length) {
+    box.innerHTML = `<p class="text-secondary">Zatím nemáš žádné tréninky.</p>`;
+    return;
+  }
+
+  data.forEach(training => {
+    box.innerHTML += `
+      <details class="fight-card p-3">
+        <summary class="fw-bold">
+          ${training.title} • ${training.date}
+        </summary>
+
+        <div class="mt-3">
+          <p class="text-secondary mb-2">
+            ${training.duration} minut • ${training.username}
+          </p>
+
+          <p><span class="badge bg-success p-2">Výhry: ${training.wins} • ${formatResults(training.win_results)}</span></p>
+          <p><span class="badge bg-danger p-2">Prohry: ${training.losses} • ${formatResults(training.loss_results)}</span></p>
+          <p><span class="badge bg-secondary p-2">Remízy: ${training.draws}</span></p>
+
+          <p>${training.notes || "Bez poznámky"}</p>
+
+          <div class="d-flex gap-2 flex-wrap">
+            <button class="btn btn-outline-light btn-sm" onclick="editTraining(${training.id})">
+              Upravit
+            </button>
+
+            <button class="btn btn-outline-danger btn-sm" onclick="deleteTraining(${training.id})">
+              Smazat
+            </button>
+          </div>
+        </div>
+      </details>
+    `;
+  });
+}
+
+function deleteTraining(id) {
+  if (!confirm("Fakt chceš tenhle trénink smazat?")) return;
+
+  fetch(`/api/training/${id}`, { method: "DELETE" })
+    .then(response => {
+      if (response.ok) {
+        showMessage("Trénink byl smazaný.", "success");
+        loadTrainings();
+      } else {
+        showMessage("Trénink se nepodařilo smazat.", "danger");
+      }
+    });
+}
+
+function editTraining(id) {
+  const training = trainings.find(item => item.id === id);
+  if (!training) return;
+
+  const newTitle = prompt("Název tréninku:", training.title);
+  if (newTitle === null) return;
+
+  const newNotes = prompt("Poznámky:", training.notes || "");
+  if (newNotes === null) return;
+
+  const payload = {
+    title: newTitle,
+    date: training.date,
+    start_time: training.start_time,
+    duration: training.duration,
+    notes: newNotes,
+    draws: training.draws,
+    win_results: training.win_results.map(item => ({
+      technique_id: item.technique_id,
+      count: item.count
+    })),
+    loss_results: training.loss_results.map(item => ({
+      technique_id: item.technique_id,
+      count: item.count
+    }))
+  };
+
+  fetch(`/api/training/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload)
+  })
+    .then(response => {
+      if (response.ok) {
+        showMessage("Trénink byl upravený.", "success");
+        loadTrainings();
+      } else {
+        showMessage("Úprava se nepovedla.", "danger");
+      }
+    });
+}
+
+loadTrainings();
+</script>
+
+{% endblock %}

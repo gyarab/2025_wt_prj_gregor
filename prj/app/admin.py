@@ -1,11 +1,18 @@
 from django.contrib import admin
 
-from .models import Technique, TechniqueStat, Training
+from .models import Technique, TechniqueStat, Training, TrainingResult
 
 
 admin.site.site_header = "FightLog Admin"
 admin.site.site_title = "FightLog"
 admin.site.index_title = "Správa tréninkového deníku"
+
+
+class TrainingResultInline(admin.TabularInline):
+    model = TrainingResult
+    extra = 1
+    autocomplete_fields = ["technique"]
+    fields = ("result_type", "technique", "count")
 
 
 class TechniqueStatInline(admin.TabularInline):
@@ -19,67 +26,40 @@ class TechniqueStatInline(admin.TabularInline):
 class TrainingAdmin(admin.ModelAdmin):
     list_display = (
         "id",
+        "title",
         "user",
         "date",
-        "start_time",
         "duration",
         "wins",
         "losses",
         "draws",
         "total_sparrings",
     )
-    list_display_links = ("id", "user", "date")
     list_filter = ("date", "user")
-    search_fields = ("user__username", "user__email", "notes")
+    search_fields = ("title", "user__username", "notes")
     date_hierarchy = "date"
     ordering = ("-date", "-start_time")
-    inlines = [TechniqueStatInline]
-
-    fieldsets = (
-        ("Základní informace", {
-            "fields": ("user", "date", "start_time", "duration")
-        }),
-        ("Výsledky sparringů", {
-            "fields": ("wins", "losses", "draws")
-        }),
-        ("Poznámky", {
-            "fields": ("notes",)
-        }),
-    )
-
-    def total_sparrings(self, obj):
-        return obj.wins + obj.losses + obj.draws
-
-    total_sparrings.short_description = "Celkem sparringů"
+    inlines = [TrainingResultInline, TechniqueStatInline]
 
 
 @admin.register(Technique)
 class TechniqueAdmin(admin.ModelAdmin):
-    list_display = ("id", "name", "usage_count")
-    list_display_links = ("id", "name")
+    list_display = ("id", "name")
     search_fields = ("name",)
     ordering = ("name",)
 
-    def usage_count(self, obj):
-        return obj.technique_stats.count()
 
-    usage_count.short_description = "Počet použití v záznamech"
+@admin.register(TrainingResult)
+class TrainingResultAdmin(admin.ModelAdmin):
+    list_display = ("id", "training", "result_type", "technique", "count")
+    list_filter = ("result_type", "technique", "training__date")
+    search_fields = ("training__title", "technique__name")
+    autocomplete_fields = ["training", "technique"]
 
 
 @admin.register(TechniqueStat)
 class TechniqueStatAdmin(admin.ModelAdmin):
-    list_display = (
-        "id",
-        "training",
-        "technique",
-        "count",
-    )
-    list_display_links = ("id", "training", "technique")
+    list_display = ("id", "training", "technique", "count")
     list_filter = ("technique", "training__date")
-    search_fields = (
-        "technique__name",
-        "training__user__username",
-        "training__notes",
-    )
+    search_fields = ("technique__name", "training__title")
     autocomplete_fields = ["training", "technique"]
-    ordering = ("-training__date", "technique__name")

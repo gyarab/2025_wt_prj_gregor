@@ -4,26 +4,43 @@
 {% block content %}
 
 <div class="page-card p-4 mb-4">
-  <h1 class="mb-2">
-    Zadání tréninku
-  </h1>
-
+  <h1>Zadání tréninku</h1>
   <p class="text-secondary">
-    Formulář volá API endpoint <code>/api/training</code> pomocí JavaScriptu a fetch().
+    Můžeš zadat víc technik najednou. Například 2× RNC a 1× triangle choke.
   </p>
 
-  <div class="row g-3">
-    <div class="col-md-4">
-      <label class="form-label">ID uživatele</label>
-      <input id="user_id" type="number" class="form-control" value="1">
+  <div class="mb-4">
+    <h3 class="h5">Připnuté techniky</h3>
+    <div id="pinnedTechniques" class="d-flex flex-wrap gap-2"></div>
+  </div>
+
+  <div class="row g-3 mb-4">
+    <div class="col-md-8">
+      <label class="form-label">Nová technika</label>
+      <input id="newTechnique" class="form-control" placeholder="Např. armbar, triangle choke, kimura">
     </div>
 
-    <div class="col-md-4">
+    <div class="col-md-4 d-flex align-items-end">
+      <button class="btn btn-red w-100" onclick="createTechnique()">
+        Přidat techniku
+      </button>
+    </div>
+  </div>
+
+  <hr class="border-secondary">
+
+  <div class="row g-3">
+    <div class="col-md-6">
+      <label class="form-label">Název tréninku</label>
+      <input id="title" type="text" class="form-control" value="Grappling sparring">
+    </div>
+
+    <div class="col-md-3">
       <label class="form-label">Datum</label>
       <input id="date" type="date" class="form-control">
     </div>
 
-    <div class="col-md-4">
+    <div class="col-md-3">
       <label class="form-label">Začátek</label>
       <input id="start_time" type="time" class="form-control">
     </div>
@@ -31,16 +48,6 @@
     <div class="col-md-4">
       <label class="form-label">Délka v minutách</label>
       <input id="duration" type="number" class="form-control" value="90">
-    </div>
-
-    <div class="col-md-4">
-      <label class="form-label">Výhry</label>
-      <input id="wins" type="number" class="form-control" value="0">
-    </div>
-
-    <div class="col-md-4">
-      <label class="form-label">Prohry</label>
-      <input id="losses" type="number" class="form-control" value="0">
     </div>
 
     <div class="col-md-4">
@@ -53,28 +60,52 @@
       <textarea id="notes" class="form-control" rows="4">Tvrdý grappling, práce na submisích.</textarea>
     </div>
   </div>
+</div>
 
-  <div class="d-flex flex-wrap gap-2 mt-4">
-    <button class="btn btn-red" onclick="createTraining()">
-      Uložit trénink
-    </button>
+<div class="page-card p-4 mb-4">
+  <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+    <div>
+      <h2 class="h4 mb-1">Výhry</h2>
+      <p class="text-secondary mb-0">Zadej techniky, na které jsi vyhrál.</p>
+    </div>
 
-    <button class="btn btn-outline-light" onclick="loadTrainings()">
-      Načíst všechny tréninky
-    </button>
-
-    <button class="btn btn-outline-secondary" onclick="clearResult()">
-      Vyčistit
+    <button class="btn btn-red" onclick="addResultRow('win')">
+      Přidat výherní techniku
     </button>
   </div>
+
+  <div id="winRows" class="d-flex flex-column gap-3"></div>
+</div>
+
+<div class="page-card p-4 mb-4">
+  <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+    <div>
+      <h2 class="h4 mb-1">Prohry</h2>
+      <p class="text-secondary mb-0">Zadej techniky, na které jsi prohrál.</p>
+    </div>
+
+    <button class="btn btn-outline-light" onclick="addResultRow('loss')">
+      Přidat techniku prohry
+    </button>
+  </div>
+
+  <div id="lossRows" class="d-flex flex-column gap-3"></div>
+</div>
+
+<div class="d-flex flex-wrap gap-2 mb-4">
+  <button class="btn btn-red" onclick="createTraining()">Uložit trénink</button>
+  <button class="btn btn-outline-light" onclick="loadTrainings()">Načíst tréninky</button>
+  <button class="btn btn-outline-secondary" onclick="clearResult()">Vyčistit</button>
 </div>
 
 <div id="message"></div>
-
 <div id="trainings" class="d-flex flex-column gap-3"></div>
 
 <script>
 document.getElementById("date").valueAsDate = new Date();
+
+let techniques = [];
+let pinnedTechniqueIds = JSON.parse(localStorage.getItem("pinnedTechniqueIds") || "[]");
 
 function getNumber(id) {
   return Number(document.getElementById(id).value);
@@ -86,29 +117,198 @@ function getValue(id) {
 
 function showMessage(text, type) {
   document.getElementById("message").innerHTML = `
-    <div class="alert alert-${type} mt-3">
-      ${text}
-    </div>
+    <div class="alert alert-${type} mt-3">${text}</div>
   `;
 }
 
+function techniqueOptions() {
+  const pinned = techniques.filter(t => pinnedTechniqueIds.includes(t.id));
+  const normal = techniques.filter(t => !pinnedTechniqueIds.includes(t.id));
+
+  let html = `<option value="">Vyber techniku</option>`;
+
+  if (pinned.length > 0) {
+    html += `<optgroup label="Připnuté techniky">`;
+    pinned.forEach(technique => {
+      html += `<option value="${technique.id}">★ ${technique.name}</option>`;
+    });
+    html += `</optgroup>`;
+  }
+
+  html += `<optgroup label="Všechny techniky">`;
+  normal.forEach(technique => {
+    html += `<option value="${technique.id}">${technique.name}</option>`;
+  });
+  html += `</optgroup>`;
+
+  return html;
+}
+
+function refreshAllSelects() {
+  document.querySelectorAll(".technique-select").forEach(select => {
+    const oldValue = select.value;
+    select.innerHTML = techniqueOptions();
+    select.value = oldValue;
+  });
+}
+
+function renderPinnedTechniques() {
+  const box = document.getElementById("pinnedTechniques");
+  box.innerHTML = "";
+
+  if (techniques.length === 0) {
+    box.innerHTML = `<span class="text-secondary">Zatím nemáš žádné techniky. Přidej první techniku nahoře.</span>`;
+    return;
+  }
+
+  techniques.forEach(technique => {
+    const isPinned = pinnedTechniqueIds.includes(technique.id);
+
+    box.innerHTML += `
+      <button
+        class="btn ${isPinned ? "btn-danger" : "btn-outline-light"} btn-sm"
+        onclick="togglePinnedTechnique(${technique.id})">
+        ${isPinned ? "★" : "☆"} ${technique.name}
+      </button>
+    `;
+  });
+}
+
+function togglePinnedTechnique(id) {
+  if (pinnedTechniqueIds.includes(id)) {
+    pinnedTechniqueIds = pinnedTechniqueIds.filter(item => item !== id);
+  } else {
+    pinnedTechniqueIds.push(id);
+  }
+
+  localStorage.setItem("pinnedTechniqueIds", JSON.stringify(pinnedTechniqueIds));
+  renderPinnedTechniques();
+  refreshAllSelects();
+}
+
+function loadTechniques() {
+  fetch("/api/technique")
+    .then(response => response.json())
+    .then(data => {
+      techniques = data;
+      renderPinnedTechniques();
+      refreshAllSelects();
+
+      if (document.querySelectorAll("#winRows .result-row").length === 0) {
+        addResultRow("win");
+      }
+
+      if (document.querySelectorAll("#lossRows .result-row").length === 0) {
+        addResultRow("loss");
+      }
+    })
+    .catch(error => {
+      showMessage("Nepodařilo se načíst techniky z API.", "danger");
+      console.error(error);
+    });
+}
+
+function createTechnique() {
+  const name = getValue("newTechnique").trim();
+
+  if (!name) {
+    showMessage("Nejdřív napiš název techniky.", "warning");
+    return;
+  }
+
+  fetch("/api/technique", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ name: name })
+  })
+    .then(response => response.json().then(data => ({ ok: response.ok, data: data })))
+    .then(result => {
+      if (result.ok) {
+        document.getElementById("newTechnique").value = "";
+        showMessage("Technika byla přidaná.", "success");
+        loadTechniques();
+      } else {
+        showMessage("Techniku se nepodařilo přidat.", "danger");
+        console.log(result.data);
+      }
+    })
+    .catch(error => {
+      showMessage("API se nepodařilo zavolat při přidávání techniky.", "danger");
+      console.error(error);
+    });
+}
+
+function addResultRow(type) {
+  const container = document.getElementById(type === "win" ? "winRows" : "lossRows");
+  const label = type === "win" ? "Výhra" : "Prohra";
+
+  const row = document.createElement("div");
+  row.className = "result-row fight-card p-3";
+
+  row.innerHTML = `
+    <div class="row g-3 align-items-end">
+      <div class="col-md-7">
+        <label class="form-label">${label} technika</label>
+        <select class="form-select technique-select">
+          ${techniqueOptions()}
+        </select>
+      </div>
+
+      <div class="col-md-3">
+        <label class="form-label">Kolikrát</label>
+        <input type="number" class="form-control result-count" value="1" min="1">
+      </div>
+
+      <div class="col-md-2">
+        <button class="btn btn-outline-danger w-100" onclick="this.closest('.result-row').remove()">
+          Smazat
+        </button>
+      </div>
+    </div>
+  `;
+
+  container.appendChild(row);
+}
+
+function collectResults(type) {
+  const container = document.getElementById(type === "win" ? "winRows" : "lossRows");
+  const rows = container.querySelectorAll(".result-row");
+
+  const results = [];
+
+  rows.forEach(row => {
+    const techniqueId = Number(row.querySelector(".technique-select").value);
+    const count = Number(row.querySelector(".result-count").value);
+
+    if (techniqueId && count > 0) {
+      results.push({
+        technique_id: techniqueId,
+        count: count
+      });
+    }
+  });
+
+  return results;
+}
+
 function createTraining() {
+  const winResults = collectResults("win");
+  const lossResults = collectResults("loss");
+
   const payload = {
-    user_id: getNumber("user_id"),
+    title: getValue("title"),
     date: getValue("date"),
     start_time: getValue("start_time") || null,
     duration: getNumber("duration"),
     notes: getValue("notes"),
-    wins: getNumber("wins"),
-    losses: getNumber("losses"),
-    draws: getNumber("draws")
+    draws: getNumber("draws"),
+    win_results: winResults,
+    loss_results: lossResults
   };
 
   fetch("/api/training", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload)
   })
     .then(response => response.json().then(data => ({
@@ -121,14 +321,22 @@ function createTraining() {
         showMessage("Trénink byl úspěšně uložený.", "success");
         loadTrainings();
       } else {
-        showMessage("Chyba při ukládání tréninku.", "danger");
+        showMessage("Chyba při ukládání tréninku: " + (result.data.message || "zkontroluj data"), "danger");
         console.log(result.data);
       }
     })
     .catch(error => {
-      showMessage("API se nepodařilo zavolat.", "danger");
+      showMessage("API se nepodařilo zavolat. Zkontroluj, jestli běží server a jestli máš hotové migrace.", "danger");
       console.error(error);
     });
+}
+
+function formatResults(results) {
+  if (!results || results.length === 0) {
+    return "žádná technika";
+  }
+
+  return results.map(item => `${item.count}× ${item.technique_name}`).join(", ");
 }
 
 function loadTrainings() {
@@ -142,30 +350,36 @@ function loadTrainings() {
         box.innerHTML += `
           <div class="fight-card p-4">
             <div class="d-flex justify-content-between flex-wrap gap-2">
-              <h3 class="h5 mb-0">
-                Trénink #${training.id}
-              </h3>
-              <span class="badge bg-danger">
-                ${training.date}
-              </span>
+              <h3 class="h5 mb-0">${training.title}</h3>
+              <span class="badge bg-danger">${training.date}</span>
             </div>
 
             <p class="text-secondary mb-2">
-              Uživatel: ${training.username} • Délka: ${training.duration} minut
+              ${training.username} • ${training.duration} minut
             </p>
 
-            <div class="d-flex flex-wrap gap-2 mb-3">
-              <span class="badge bg-success">Výhry: ${training.wins}</span>
-              <span class="badge bg-danger">Prohry: ${training.losses}</span>
-              <span class="badge bg-secondary">Remízy: ${training.draws}</span>
+            <div class="d-flex flex-column gap-2 mb-3">
+              <span class="badge bg-success text-start p-2">
+                Výhry: ${training.wins} • ${formatResults(training.win_results)}
+              </span>
+
+              <span class="badge bg-danger text-start p-2">
+                Prohry: ${training.losses} • ${formatResults(training.loss_results)}
+              </span>
+
+              <span class="badge bg-secondary text-start p-2">
+                Remízy: ${training.draws}
+              </span>
             </div>
 
-            <p class="mb-0">
-              ${training.notes || "Bez poznámky"}
-            </p>
+            <p class="mb-0">${training.notes || "Bez poznámky"}</p>
           </div>
         `;
       });
+    })
+    .catch(error => {
+      showMessage("Nepodařilo se načíst tréninky.", "danger");
+      console.error(error);
     });
 }
 
@@ -173,6 +387,9 @@ function clearResult() {
   document.getElementById("message").innerHTML = "";
   document.getElementById("trainings").innerHTML = "";
 }
+
+loadTechniques();
+loadTrainings();
 </script>
 
 {% endblock %}

@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+{% block title %}Statistiky | FightLog{% endblock %}
+
+{% block content %}
+
+<div class="page-card p-4 mb-5">
+  <h1>Statistiky</h1>
+  <p class="text-secondary mb-0">
+    Přehled technik, na které nejčastěji vyhráváš a prohráváš.
+  </p>
+</div>
+
+<div class="row g-4 mb-5">
+  <div class="col-lg-6">
+    <div class="fight-card p-4 h-100">
+      <h2 class="h4">Výhry podle techniky</h2>
+      <p class="text-secondary">
+        Na co nejčastěji vyhráváš.
+      </p>
+
+      <div class="chart-wrap">
+        <canvas id="winsChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-6">
+    <div class="fight-card p-4 h-100">
+      <h2 class="h4">Prohry podle techniky</h2>
+      <p class="text-secondary">
+        Na co nejčastěji prohráváš.
+      </p>
+
+      <div class="chart-wrap">
+        <canvas id="lossesChart"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="page-card p-4">
+  <h2>Souhrn</h2>
+  <div id="summary" class="row g-3 mt-2"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+function redShades(count) {
+  const colors = [
+    "#fecaca",
+    "#fca5a5",
+    "#f87171",
+    "#ef4444",
+    "#dc2626",
+    "#b91c1c",
+    "#991b1b",
+    "#7f1d1d",
+    "#450a0a"
+  ];
+
+  return Array.from({length: count}, function(_, index) {
+    return colors[Math.min(index, colors.length - 1)];
+  });
+}
+
+function createDoughnut(canvasId, data, title) {
+  if (!data.length) {
+    document.getElementById(canvasId).parentElement.innerHTML =
+      `<p class="text-secondary">Zatím nejsou žádná data.</p>`;
+    return;
+  }
+
+  new Chart(document.getElementById(canvasId), {
+    type: "doughnut",
+    data: {
+      labels: data.map(item => item.technique),
+      datasets: [{
+        label: title,
+        data: data.map(item => item.count),
+        backgroundColor: redShades(data.length),
+        borderColor: "#080c14",
+        borderWidth: 3
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: "bottom",
+          labels: {
+            color: "#f8fafc"
+          }
+        }
+      }
+    }
+  });
+}
+
+function renderSummary(wins, losses) {
+  const totalWins = wins.reduce((sum, item) => sum + item.count, 0);
+  const totalLosses = losses.reduce((sum, item) => sum + item.count, 0);
+
+  const bestWin = wins.length ? wins[0].technique : "zatím nic";
+  const worstLoss = losses.length ? losses[0].technique : "zatím nic";
+
+  document.getElementById("summary").innerHTML = `
+    <div class="col-md-4">
+      <div class="fight-card p-4 h-100">
+        <h3 class="h5">Celkem výher</h3>
+        <p class="display-6 brand-red fw-bold mb-0">${totalWins}</p>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="fight-card p-4 h-100">
+        <h3 class="h5">Celkem proher</h3>
+        <p class="display-6 brand-red fw-bold mb-0">${totalLosses}</p>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="fight-card p-4 h-100">
+        <h3 class="h5">Nejčastější výhra</h3>
+        <p class="brand-red fw-bold mb-0">${bestWin}</p>
+        <p class="text-secondary mb-0">Nejčastější prohra: ${worstLoss}</p>
+      </div>
+    </div>
+  `;
+}
+
+Promise.all([
+  fetch("/api/stats/wins").then(response => response.json()),
+  fetch("/api/stats/losses").then(response => response.json())
+]).then(([wins, losses]) => {
+  createDoughnut("winsChart", wins, "Výhry");
+  createDoughnut("lossesChart", losses, "Prohry");
+  renderSummary(wins, losses);
+});
+</script>
+
+{% endblock %}

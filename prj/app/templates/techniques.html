@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+{% block title %}Techniky | FightLog{% endblock %}
+
+{% block content %}
+
+<div class="page-card p-4 mb-5">
+  <h1>Techniky</h1>
+  <p class="text-secondary mb-0">
+    Přidávání a přehled všech technik, které používáš v trénincích.
+  </p>
+</div>
+
+<div class="page-card p-4 mb-5">
+  <h2>Přidat novou techniku</h2>
+
+  <div class="row g-3 mt-2">
+    <div class="col-md-8">
+      <input id="newTechnique" class="form-control form-control-lg" placeholder="Např. rear naked choke, armbar, kimura">
+    </div>
+
+    <div class="col-md-4">
+      <button class="btn btn-red btn-lg w-100" onclick="createTechnique()">
+        Přidat techniku
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="page-card p-4">
+  <h2>Seznam technik</h2>
+  <p class="text-secondary">
+    Techniky jsou seřazené podle názvu.
+  </p>
+
+  <div id="techniqueList" class="d-flex flex-column gap-3 mt-4"></div>
+</div>
+
+<div id="message"></div>
+
+<script>
+function showMessage(text, type) {
+  document.getElementById("message").innerHTML = `
+    <div class="alert alert-${type} mt-4">${text}</div>
+  `;
+}
+
+function loadTechniques() {
+  fetch("/api/technique")
+    .then(response => response.json())
+    .then(data => {
+      const techniques = data.sort((a, b) => a.name.localeCompare(b.name, "cs"));
+      const box = document.getElementById("techniqueList");
+      box.innerHTML = "";
+
+      if (!techniques.length) {
+        box.innerHTML = `<p class="text-secondary">Zatím nejsou přidané žádné techniky.</p>`;
+        return;
+      }
+
+      techniques.forEach((technique, index) => {
+        box.innerHTML += `
+          <div class="technique-pill d-flex justify-content-between align-items-center">
+            <div>
+              <strong>${technique.name}</strong>
+              <div class="text-secondary small">Technika #${index + 1}</div>
+            </div>
+
+            <span class="badge bg-danger p-2">
+              FightLog
+            </span>
+          </div>
+        `;
+      });
+    });
+}
+
+function createTechnique() {
+  const input = document.getElementById("newTechnique");
+  const name = input.value.trim();
+
+  if (!name) {
+    showMessage("Nejdřív napiš název techniky.", "warning");
+    return;
+  }
+
+  fetch("/api/technique", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({name: name})
+  })
+    .then(response => response.json().then(data => ({ok: response.ok, data: data})))
+    .then(result => {
+      if (result.ok) {
+        input.value = "";
+        showMessage("Technika byla přidaná.", "success");
+        loadTechniques();
+      } else {
+        showMessage("Techniku se nepodařilo přidat.", "danger");
+      }
+    })
+    .catch(error => {
+      showMessage("API se nepodařilo zavolat.", "danger");
+      console.error(error);
+    });
+}
+
+loadTechniques();
+</script>
+
+{% endblock %}
